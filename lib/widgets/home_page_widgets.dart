@@ -1,11 +1,13 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:uber_eats_ui/json/home_page_json.dart';
+import 'package:uber_eats_ui/pages/store_details_page.dart';
 import 'package:uber_eats_ui/theme/colors.dart';
 import 'package:uber_eats_ui/theme/styles.dart';
 import 'package:uber_eats_ui/widgets/custom_slider.dart';
+
+import 'common_widgets.dart';
 
 class HomePageBody extends StatefulWidget {
   @override
@@ -48,7 +50,9 @@ class _HomePageBodyState extends State<HomePageBody> {
               size: size,
               content: firstMenu[0],
             ),
-            HomePageMenuDetails(),
+            MenuCustomDetails(
+              content: firstMenu[0],
+            ),
             SizedBox(
               height: 15,
             ),
@@ -99,15 +103,14 @@ class HomePagePopularNearYouSection extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        padding: EdgeInsets.only(bottom: 50),
+                        padding: const EdgeInsets.only(bottom: 50),
                         width: size.width,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             HomePageMenu(
-                                size: size, content: exploreMenu[index]),
-                            HomePageMenuCustomDetails(
-                                content: popularNearYou[index]),
+                                size: size, content: popularNearYou[index]),
+                            MenuCustomDetails(content: popularNearYou[index]),
                           ],
                         ),
                       ),
@@ -116,64 +119,6 @@ class HomePagePopularNearYouSection extends StatelessWidget {
                 );
               },
             ))),
-      ],
-    );
-  }
-}
-
-class HomePageMenuCustomDetails extends StatelessWidget {
-  final Map content;
-
-  const HomePageMenuCustomDetails({this.content});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 15,
-        ),
-        Container(
-          padding: EdgeInsets.all(2),
-          decoration: customIconContainerStyle,
-          child: Icon(
-            LineIcons.hourglass_half,
-            size: 20,
-            color: primary,
-          ),
-        ),
-        SizedBox(
-          width: 8,
-        ),
-        Container(
-          padding: EdgeInsets.all(4),
-          decoration: customIconContainerStyle,
-          child: Text(content["time"]),
-        ),
-        SizedBox(
-          width: 8,
-        ),
-        Container(
-          padding: EdgeInsets.all(4),
-          decoration: customIconContainerStyle,
-          child: Row(
-            children: [
-              Text(content["rate"]),
-              SizedBox(
-                width: 5,
-              ),
-              Icon(
-                LineIcons.star,
-                size: 15,
-                color: yellowStar,
-              ),
-              SizedBox(
-                width: 5,
-              ),
-              Text(content["rate_number"]),
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -213,14 +158,14 @@ class HomePageMoreToExploreSection extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        padding: EdgeInsets.only(bottom: 50),
+                        padding: const EdgeInsets.only(bottom: 50),
                         width: size.width,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             HomePageMenu(
                                 size: size, content: exploreMenu[index]),
-                            HomePageMenuCustomDetails(
+                            MenuCustomDetails(
                               content: exploreMenu[index],
                             )
                           ],
@@ -244,10 +189,13 @@ class HomePageMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size.width,
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, "/store_details",
+            arguments: StoreDetailPageArguments(content: content));
+      },
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -256,11 +204,14 @@ class HomePageMenu extends StatelessWidget {
                 Container(
                   width: size.width,
                   height: 160,
-                  child: Image(
-                    image: NetworkImage(
-                      content["img"],
+                  child: Hero(
+                    tag: content["img_id"].toString(),
+                    child: Image(
+                      image: NetworkImage(
+                        content["img"],
+                      ),
+                      fit: BoxFit.cover,
                     ),
-                    fit: BoxFit.cover,
                   ),
                 ),
                 Positioned(
@@ -303,53 +254,9 @@ class HomePageMenu extends StatelessWidget {
             SizedBox(
               height: 10,
             ),
-            Text(
-              content["description"],
-            ),
-            SizedBox(
-              height: 10,
-            ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class HomePageMenuDetails extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 15,
-        ),
-        Container(
-          padding: EdgeInsets.all(2),
-          decoration: customIconContainerStyle,
-          child: Icon(
-            LineIcons.hourglass_half,
-            size: 20,
-            color: primary,
-          ),
-        ),
-        SizedBox(
-          width: 8,
-        ),
-        Container(
-          padding: EdgeInsets.all(4),
-          decoration: customIconContainerStyle,
-          child: Text(firstMenu[0]["time"]),
-        ),
-        SizedBox(
-          width: 8,
-        ),
-        Container(
-          padding: EdgeInsets.all(4),
-          decoration: customIconContainerStyle,
-          child: Text(firstMenu[0]["delivery_fee"]),
-        ),
-      ],
     );
   }
 }
@@ -364,9 +271,9 @@ class HomePageCategories extends StatelessWidget {
     return Container(
       width: size.width,
       decoration: BoxDecoration(color: textFieldColor),
-      padding: EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
         decoration: BoxDecoration(color: white),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -374,7 +281,7 @@ class HomePageCategories extends StatelessWidget {
             child: Row(
               children: categories.map((item) {
                 return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 15),
+                  margin: const EdgeInsets.symmetric(horizontal: 15),
                   child: Column(
                     children: [
                       SvgPicture.asset(

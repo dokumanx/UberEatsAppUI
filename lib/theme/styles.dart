@@ -16,7 +16,9 @@ TextStyle customTitle = TextStyle(
   fontWeight: FontWeight.w500,
   height: 1.3,
 );
-
+TextStyle customLittleContent = TextStyle(
+  fontSize: 12,
+);
 BoxDecoration customIconContainerStyle = BoxDecoration(
   color: textFieldColor,
   borderRadius: BorderRadius.circular(2),
